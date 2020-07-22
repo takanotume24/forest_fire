@@ -11,9 +11,58 @@ module ForestFire
     ASH
   end
 
+  class Cell < Object
+    def initialize(num : Int32)
+      @num = num
+    end
+
+    def status : CellStatus
+      case @num
+      when 0
+        return CellStatus::VACANT
+      when 1
+        return CellStatus::TREE
+      when 2, 3, 4
+        return CellStatus::READY
+      when 5, 6, 7, 8
+        return CellStatus::FIRE
+      when 9
+        return CellStatus::ASH
+      else
+        return CellStatus::ASH
+      end
+    end
+
+    def char : Char
+      case status
+      in CellStatus::VACANT
+        "⬜"
+      in CellStatus::TREE
+        "🌲"
+      in CellStatus::READY
+        "🟨"
+      in CellStatus::FIRE
+        "🔥"
+      in CellStatus::ASH
+        "⬛"
+      end
+    end
+
+
+  end
+
   class Map
+    @array : Array(Array(Cell))
+
     def initialize(array : Array(Array(Int32)))
-      @array = array
+      @array = Array(Array(Cell)).new
+      array.each do |x|
+        a = Array(Cell).new
+        x.each do |y|
+          a << Cell.new y
+        end
+        @array << a
+      end
     end
 
     def get_next_gen(now, fired_cell)
